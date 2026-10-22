@@ -12,4 +12,5 @@ First install dependencies
 npm ci
 npm start # to execute in development mode
 npm run build # to compile project to production
+npm run lint # to lint JavaScript source and webpack configuration
 ```
