@@ -41,7 +41,7 @@ To use a different port, set the `PORT` environment variable before starting the
 | `npm start` | Starts the Webpack development server at `http://localhost:8080` (or the port set by `PORT`). |
 | `npm run build` | Removes the existing `dist` directory, then creates an optimized production bundle in `dist`. |
 | `npm run clean` | Removes the generated `dist` directory. |
-| `npm run lint` | Runs ESLint on the application source, Webpack configuration, tests, and scripts. |
+| `npm run lint` | Runs ESLint on the application source, Webpack configuration, tests, and scripts, including checks for potential security hotspots and hard-coded passwords, tokens, keys, and other secrets. |
 | `npm test` | Runs the tests with Node.js's built-in test runner. A pretest check requires Node.js 18 or newer. The repository currently includes an intentionally failing test (`tests/intentional-failure.test.mjs`) for CI testing, so this command is expected to fail until that test is removed or changed. |
 | `npm run audit` | Checks installed dependencies for known security vulnerabilities. |
 | `npm run audit:fix` | Runs `npm audit fix` to apply compatible dependency updates where available. Review the changes and rerun the tests and build afterward. |
@@ -58,17 +58,21 @@ npm run build
 
 ## CI workflow
 
-The GitHub Actions CI workflow runs on pushes and pull requests that include changes other than `README.md`. Each job runs independently and can execute in parallel:
+The GitHub Actions CI workflow runs on pushes and pull requests that include changes other than `README.md`. GitHub Secret Scanning is a repository-level feature that can scan for secrets and, when push protection is enabled, block supported secrets before they are pushed. Independently, the workflow runs TruffleHog first; only after it succeeds do the audit, update check, lint, build, and test jobs run in parallel:
 
 ```mermaid
 flowchart TD
-    trigger["Push or pull request<br/>excluding README-only changes"] --> audit["Audit dependencies<br/>Node.js 22<br/>Fail on critical vulnerabilities"]
-    trigger --> updates["Check for dependency updates<br/>Node.js 22"]
-    trigger --> lint["Lint source and configuration<br/>Node.js 22"]
-    trigger --> build["Build production bundle<br/>Node.js 22"]
-    trigger --> tests["Run automated tests<br/>Node.js 20"]
+    trigger["Push or pull request<br/>excluding README-only changes"] --> native["GitHub Secret Scanning<br/>Repository feature; push protection can block pushes"]
+    trigger --> secrets["Scan commits for secrets<br/>TruffleHog CI gate"]
+    secrets --> audit["Audit dependencies<br/>Node.js 22<br/>Fail on critical vulnerabilities"]
+    secrets --> updates["Check for dependency updates<br/>Node.js 22"]
+    secrets --> lint["Lint source and configuration<br/>Node.js 22"]
+    secrets --> build["Build production bundle<br/>Node.js 22"]
+    secrets --> tests["Run automated tests<br/>Node.js 20"]
 ```
 
 ## Security analysis
 
 GitHub Actions runs CodeQL analysis for JavaScript/TypeScript on pushes, pull requests, and weekly. Findings are published in the repository's **Security** tab under **Code scanning**.
+
+The CI workflow uses TruffleHog as a blocking secret scan before its other jobs run. For an additional GitHub-native layer, repository administrators can enable **Secret Protection** and **push protection** from **Settings → Advanced Security**. GitHub then scans the repository for supported secret types and can block pushes containing detected secrets. Availability depends on the repository's visibility, ownership, and GitHub plan; enabling these features is a repository setting and cannot be done by this workflow file.
