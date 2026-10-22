@@ -13,4 +13,5 @@ npm ci
 npm start # to execute in development mode
 npm run build # to compile project to production
 npm run lint # to lint JavaScript source and webpack configuration
+npm test # to run the built-in Node.js test suite (Node.js 18+; CI uses Node.js 20)
 ```

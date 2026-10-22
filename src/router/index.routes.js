@@ -1,22 +1,15 @@
 import { pages } from "../controllers/index";
+import { resolveRoute } from "./resolve-route.mjs";
 
 const router = async (route) => {
-  let content = document.getElementById("root");
+  const content = document.getElementById("root");
   content.innerHTML = "";
 
-  console.log(route);
+  const page = resolveRoute(route);
+  const pageContent =
+    page === "posts" ? await pages[page]() : pages[page]();
 
-  switch (route) {
-    case "#/": {
-      return content.appendChild(pages.home());
-    }
-    case "#/posts": {
-      return content.appendChild(await pages.posts());
-    }
-    default: {
-      return content.appendChild(pages.notFound());
-    }
-  }
+  return content.appendChild(pageContent);
 };
 
 export { router };

@@ -1,13 +1,11 @@
 import view from "../view/home.html";
+import { wireHomeButton } from "./home-button.mjs";
 
 export default () => {
   const divElement = document.createElement("div");
   divElement.innerHTML = view;
 
-  const btnClick = divElement.querySelector("#btnClick");
-  btnClick.addEventListener("click", () => {
-    alert("clicked");
-  });
+  wireHomeButton(divElement, alert);
 
   return divElement;
 };
