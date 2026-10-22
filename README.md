@@ -24,3 +24,7 @@ npm run update:packages # to update dependency ranges in package.json with ncu
 ```
 
 After updating package ranges, run `npm install` to refresh `package-lock.json`, then run the tests and build.
+
+# Security analysis
+
+GitHub Actions runs CodeQL analysis for JavaScript/TypeScript on pushes, pull requests, and weekly. Findings are published in the repository's **Security** tab under **Code scanning**.
