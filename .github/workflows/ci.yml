@@ -14,11 +14,17 @@ jobs:
       - name: Set up Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: 16
+          node-version: 22
           cache: npm
 
       - name: Install dependencies
         run: npm ci
+
+      - name: Audit dependencies
+        run: npm run audit
+
+      - name: Check for dependency updates
+        run: npm run check:updates
 
       - name: Lint
         run: npm run lint
