@@ -2,13 +2,18 @@ name: CI
 
 on:
   push:
+    paths-ignore:
+      - README.md
   pull_request:
+    paths-ignore:
+      - README.md
 
 env:
   NODE_VERSION: 22
 
 jobs:
   audit:
+    name: Audit dependencies (fail on critical)
     runs-on: ubuntu-latest
     steps:
       - name: Check out repository
@@ -27,6 +32,7 @@ jobs:
         run: npm run audit -- --audit-level=critical
 
   check-updates:
+    name: Check for dependency updates
     runs-on: ubuntu-latest
     steps:
       - name: Check out repository
@@ -45,6 +51,7 @@ jobs:
         run: npm run check:updates
 
   lint:
+    name: Lint source and configuration
     runs-on: ubuntu-latest
     steps:
       - name: Check out repository
@@ -63,6 +70,7 @@ jobs:
         run: npm run lint
 
   build:
+    name: Build production bundle
     runs-on: ubuntu-latest
     steps:
       - name: Check out repository
@@ -81,6 +89,7 @@ jobs:
         run: npm run build
 
   test:
+    name: Run automated tests
     env:
       NODE_VERSION: 20
     runs-on: ubuntu-latest
