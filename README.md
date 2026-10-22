@@ -9,7 +9,7 @@ Tools used in this example are:
 
 First install dependencies
 ```shell
-npm install
+npm ci
 npm start # to execute in development mode
 npm run build # to compile project to production
 ```
